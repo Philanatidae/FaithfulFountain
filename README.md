@@ -1,4 +1,4 @@
-# Faithul Fountain
+# Faithful Fountain
 
 **NOTE:** I am currently in the process of open-sourcing the engine. Do not use until this notice is removed.
 
