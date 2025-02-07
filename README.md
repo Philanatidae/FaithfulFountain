@@ -1,96 +1,80 @@
-# FFRollGame
+# Faithul Fountain
 
-Current version: v0.1
+**NOTE:** I am currently in the process of open-sourcing the engine. Do not use until this notice is removed.
 
-Remember to update the version in the following places before doing a release:
- - README
- - CVarDefaults (RollGame)
- - macOS plist
- - iOS plist
- - Android version
+Faithful Fountain (FF) is a multi-platform game engine written primarily in C++.
 
-## Useful bits
-[SFINAE](https://eli.thegreenplace.net/2014/sfinae-and-enable_if/)
-```
-template<typename K, typename std::enable_if<std::is_convertible<K, T>::value, void>::type* = nullptr>
-ResourceHandle(const ResourceHandle<K>& other);
-```
+This is not intended to compete with Unity, Godot, etc. This project is mainly for my learning and enjoyment.
 
-macOS file command (used to see architectures of executable): `file [filename]`
+Development of FF is driven by needs of a specific project. Features are not added to the engine without being used in an actual project (whether released or not). The main point being, FF is not intended to be developed in isolation.
 
-For template specialization: If getting duplicate symbols, it's because symbols _are_ duplicate, so either 1) the
-template has to be `inline`, or 2) the definition has to be in the .cpp file (forward declare the specialization).
+FF's API is very unstable. Large refactors are quite common. Until the API is shown to be stable, it is expected that projects using FF should fork the engine and customize it according to their needs.
 
-App packaging for App Store Connect: https://developer.apple.com/forums/thread/128166
-Might be a good script to implement: https://developer.apple.com/forums/thread/73221
-Reading on signing: https://www.objc.io/issues/17-security/inside-code-signing/
-Signing script? Seems pretty neat: https://gist.github.com/Weptun/5406993
+FF is licensed under the Mozilla Public License Version 2.0 unless stated otherwise (some files that don't make sense to be required to remain open are licensed into the public domain). New files are expected to prepend the file with the header (found in LicenseHeaders.txt).
 
-On Android: `app->activity->vm->DetachCurrentThread()` should only be called when the thread is being destroyed:
-    - https://groups.google.com/g/android-ndk/c/2H8z5grNqjo
-    - https://web.archive.org/web/20111102062643/http://comments.gmane.org/gmane.comp.handhelds.android.ndk/4687
+## Engine Design
 
-JNI Useful info: https://www.ibm.com/docs/en/sdk-java-technology/8?topic=collector-overview-jni-object-references
+### Design Principles
+There are a few main principles that Faithful Fountain has been developed under:
+ - The engine is written alongside a project to ensure that features/refactors are actually useful in the real world.
+ - Games are "platform and screen agnostic". This allows games to be flexible enough to be deployed to multiple platforms, multiple aspect ratios, etc.
+ - The graphics abstraction's API is similar to Metal. I've found that Metal's API is a nice blend of verbosity for low-level API's while still allowing for OpenGL ES 3.0 support.
+    - OpenGL ES 3.0 will be retained as long as I can, but I do understand that this API is very old and I've already ran into some limitations.
+ - No hampering the ability for FF to be integrated into proprietary software.
+    - The engine is open-source under a permissive license to enforce contributing back upstream, but games themselves can be closed-source. The engine should not restrict this ability (i.e. the engine code should not be written such that it forces a project to release proprietary code that they don't want shared).
+ - Don't abstract too early.
+    - The long-term goal is for FF to be modular, but since the engine is developped alongside a project, the current non-modular nature hasn't been an issue so far.
 
-## Android `argv`
-For Android, `argv` is passed in via activity launch flags. In Android Studio, under the app configuration, under "Launch Flags":
-```
---esa clioptions "... args here ..."
-```
+### Engine Architecture
+FF has the following main pieces:
+ - Events
+ - Entity-Component-System (called Actors in FF)
+ - Processes
+ - Scenes
+ - CVars
 
-Strings must be escaped. For example:
-```
---esa clioptions "-Dfirst_cvar=false -Dsecond_cvar=10 -Dthird_cvar=\"hello world\""
-```
+Processes can be added to the main GameServicer's ProcessManager, which are updated every update cycle. Processes can be chained together, for example types of animation or dialog boxes can be chains of processes.
 
-## Android NDK
-NDK r23 is required due to API Level 18 (Jelly Bean) support. For OpenGL ES 3.1, minimum API level is 21 (Lollipop). For OpenGL ES 3.2, minimum API level is 24 (Nougat). For Vulkan 1.0, minimum API level is 24 (Nougat). For Vulkan 1.1, minimum API level is API level 28 (Pie). For Vulkan 1.2, minimum API level is API level 33 (Android 13).
+There are four main types of processes:
+ - Tasks: timers, animations, etc.
+    - Aren't actually called tasks in the source code, though this may change. I haven't decided yet.
+ - Systems: Long-lived processes that update entities "passively". This is the same thing as a "system" in the Entity-Component-System model.
+ - Directors: Long-lived processes that update entities "actively" when an Event is triggered. They don't update every frame.
+ - Cores: Top-level only. They are a combination of Systems and Directors, acting every frame and on events. An example is the AudioCore.
 
-Also note the Android version that first supported certain architectures:
- - aarch64 - API Level 21 (Lollipop)
- - x86_64 - API Level 21 (Lollipop)
- - armeabi-v7 - API Level 9 (Gingerbread)
- - x86 - API Level 14 (Ice Cream Sandwich)
+Actors are typically created in Scenes. Scenes are a special type of process that handle transitioning Actors from one scene to another.
 
-## Config Commands
+CVars are global data, typically used for configuration.
 
-### Desktop
-```
-cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DFF_GAME=RollGame -DFF_DEV_FEATURES=On -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DFF_ENABLE_BACKWARD=Yes ..
-```
+`GameServicer` in ff-core is the entry point into the engine. Each game/project using FF defines a `entry` function, which loads game-specific top-level systems and CVars, and starts a Scene. Start here when looking through the engine.
 
-Release (macOS):
-```
-cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DFF_GAME=RollGame -DFF_DEV_FEATURES=Off -DCMAKE_EXPORT_COMPILE_COMMANDS=Off -DFF_LINK_STATIC=Yes -DFF_LINK_SHARED=No -DFF_APPLE_USE_NSBUNDLE=On ..
-```
+## Build Requirements
+The following utilities are required to be installed:
+ - CMake
+ - Clang (GCC may also work), or MSVC on Windows
+ - Xcode (macOS only)
+ - Android Studio (Android only) with NDK
+ - Ninja (won't be required in the future)
+ - [Task](https://taskfile.dev)
+ - [msdg-bmfont-xml](https://github.com/soimy/msdf-bmfont-xml)
 
-For macOS Universal 2, add the following: `-DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"`
+## Supported Platforms
+The following platforms are supported:
+ - macOS
+ - iOS/iPadOS
+ - Android
+ - Windows (OpenGL only)
 
-NOTE: Tracy on Windows (0.7.8) uses vcpkg to depend on Freetype2 (2.11.0), which has a problem with MSVC. Tracy profiler (server) cannot be built on Windows until vcpkg is updated with a Freetype2 release (which hasn't happened yet, 9/7/2021).
+The following platforms have initial support, but may or may not be continued:
+ - visionOS
 
+## Project Setup
 
-### iOS
-This will need to be streamlined in the future because Faithful Fountain is designed to be loaded in as dynamic libraries. However, iOS (and Android) require static linking of libraries.
+TODO.
 
-Dynamic libraries work in the simulator, however.
+## License
 
-Toolchain: [https://github.com/leetal/ios-cmake](https://github.com/leetal/ios-cmake)
+This codebase is primarily licensed until the Mozilla Public License Version 2.0. See `LICENSE` for more information. All files in this repository are released under this license unless stated otherwise.
 
-1) Building game library:
-`SIMULATORARM64` for simulator on Apple Silicon mac.
-`OS64` for an actual device.
-```
-mkdir build-ios && cd build-ios
-cmake -GXcode -DFF_DEV_FEATURES=On -DCMAKE_TOOLCHAIN_FILE=../cmake/ios.toolchain.cmake -DPLATFORM=SIMULATORARM64 -DDEPLOYMENT_TARGET=13.0 -DFF_LINK_SHARED=No -DFF_LINK_STATIC=On ..
-```
-2) Open the project in Xcode, zero check, build
+This repository contains copies of some third-party software that are licensed differently.
 
-### Edge Cases
-#### iOS
-"is not an ios SDK": `sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer`
-
-cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/ios.toolchain.cmake -H. -Bbuild.sim64 -GXcode -DPLATFORM=SIMULATORARM64
-cmake --build build.sim64/ --config Release
-
-#### Android
-Android Studio comes with an outdated CMake version. To use the CMake on the system, put `cmake.dir` in `local.properties`. Note that it needs to be the path to `bin/cmake`, not `cmake`.
