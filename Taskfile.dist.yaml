@@ -1,0 +1,197 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+version: '3'
+
+env:
+  #EXEC_PATH_ASSET_BUILDER: defined/in/Taskfile_{{OS}}.yml
+  #GAME_LIBRARY: defined/in/Taskfile_{{OS}}.yml
+  ASSET_INPUT_DIR: ./Assets
+
+includes:
+  os: ./Taskfiles/Taskfile_{{OS}}.yml
+
+tasks:
+  default:
+    cmds:
+      - task: build-all
+
+  build: # Desktop & asset builder
+    cmds:
+      - ninja -C ./build ff-asset-builder
+      - ninja -C ./build ff-sdl2
+  build-all:
+    cmds:
+      - ninja -C ./build
+  build-asset-builder:
+    cmds:
+      - ninja -C ./build ff-asset-builder
+
+  test:
+    deps: [build-all]
+    cmds:
+      - ./build/ff-core/tests/ff-tests-core
+  
+  run: # Desktop
+    deps: [build-all]
+    cmds:
+      - task: os:build-assets-platform
+      - ./build/ff-sdl2/ff-sdl2 -Dgame_library_path="{{.GAME_LIBRARY}}" -Dasset_bundle_path="./Assets/bin" {{.CLI_ARGS}}
+
+  run-gl: # Desktop (Force OpenGL)
+    deps: [build-all]
+    cmds:
+      - task: os:build-assets-platform
+      - ./build/ff-sdl2/ff-sdl2 -Dgame_library_path="{{.GAME_LIBRARY}}" -Dasset_bundle_path="./Assets/bin" {{.CLI_ARGS}} -Dgraphics_backend=opengl
+
+  config-macos-dev:
+    cmds:
+      - mkdir build
+      - cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DFF_GAME=RollGame -DFF_DEV_FEATURES=On -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DFF_ENABLE_BACKWARD=Yes -S . -B ./build
+  
+  internal-build-assets:
+    deps: [build-asset-builder]
+    vars:
+      PRODUCTION: '{{.PRODUCTION}}'
+      OUTPUT_DIR: '{{.OUTPUT_DIR}}'
+      PLATFORM: '{{.PLATFORM}}'
+      GRAPHICS_BACKEND: '{{.GRAPHICS_BACKEND}}'
+      COMMAND: '{{default "" .COMMAND}}'
+
+    cmds:
+      - ./build/ff-asset-builder/ff-asset-builder {{.COMMAND}} -Dasset_builder_production_build={{.PRODUCTION}} -Dasset_builder_input_directory={{.ASSET_INPUT_DIR}} -Dasset_builder_output_directory="{{.OUTPUT_DIR}}" -Dasset_builder_platform_name={{.PLATFORM}} -Dasset_builder_graphics_backend={{.GRAPHICS_BACKEND}} -Dgame_library_path="{{.GAME_LIBRARY}}"
+  # TODO: Remove this, rely again on internal-build-assets. This will likely depend on switching from MSVC to Mingw
+  internal-build-assets-windows:
+    #deps: [build-asset-builder]
+    vars:
+      PRODUCTION: '{{.PRODUCTION}}'
+      OUTPUT_DIR: '{{.OUTPUT_DIR}}'
+      PLATFORM: '{{.PLATFORM}}'
+      GRAPHICS_BACKEND: '{{.GRAPHICS_BACKEND}}'
+
+    cmds:
+      - ./out/build/x64-Debug/ff-asset-builder/ff-asset-builder.exe -Dasset_builder_production_build={{.PRODUCTION}} -Dasset_builder_input_directory={{.ASSET_INPUT_DIR}} -Dasset_builder_output_directory="{{.OUTPUT_DIR}}" -Dasset_builder_platform_name={{.PLATFORM}} -Dasset_builder_graphics_backend={{.GRAPHICS_BACKEND}} -Dgame_library_path="{{.GAME_LIBRARY}}"
+
+  build-assets-macos:
+    cmds:
+      - task: internal-build-assets
+        vars: {
+          PRODUCTION: '{{default "no" .PRODUCTION}}',
+          OUTPUT_DIR: "./Assets/bin",
+          PLATFORM: "macOS",
+          GRAPHICS_BACKEND: '{{default "Metal,GL" .GRAPHICS_BACKEND}}',
+          COMMAND: '{{default "" .COMMAND}}'
+        }
+  clean-assets-macos:
+    cmds:
+      - task: build-assets-macos
+        vars: {
+          COMMAND: "clean"
+        }
+  build-assets-macos-release:
+    cmds:
+      - task: build-assets-macos
+        vars: {
+          PRODUCTION: "yes",
+          GRAPHICS_BACKEND: "Metal"
+        }
+  build-assets-ios:
+    cmds:
+      - task: internal-build-assets
+        vars: {
+          PRODUCTION: '{{default "no" .PRODUCTION}}',
+          OUTPUT_DIR: '{{default "./ff-ios/build.os64/Debug-iphoneos/FaithfulFountain.app/Assets" .OUTPUT_DIR}}',
+          PLATFORM: "iOS",
+          GRAPHICS_BACKEND: 'Metal',
+          COMMAND: '{{default "" .COMMAND}}'
+        }
+  clean-assets-ios:
+    cmds:
+      - task: build-assets-ios
+        vars: {
+          COMMAND: "clean"
+        }
+  build-assets-ios-release:
+    cmds:
+      - task: build-assets-ios
+        vars: {
+          PRODUCTION: "yes",
+          OUTPUT_DIR: "./ff-ios/build.os64/Release-iphoneos/FaithfulFountain.app/Assets",
+          COMMAND: '{{default "" .COMMAND}}'
+        }
+  clean-assets-ios-release:
+    cmds:
+      - task: build-assets-ios-release
+        vars: {
+          COMMAND: "clean"
+        }
+  build-assets-ios-simulator:
+    cmds:
+      - task: internal-build-assets
+        vars: {
+          PRODUCTION: '{{default "no" .PRODUCTION}}',
+          OUTPUT_DIR: '{{default "./ff-ios/build.sim64/Debug-iphonesimulator/FaithfulFountain.app/Assets" .OUTPUT_DIR}}',
+          PLATFORM: "iOS-Simulator",
+          GRAPHICS_BACKEND: 'Metal',
+          COMMAND: '{{default "" .COMMAND}}'
+        }
+  clean-assets-ios-simulator:
+    cmds:
+      - task: build-assets-ios-simulator
+        vars: {
+          COMMAND: "clean"
+        }
+  build-assets-ios-simulator-release:
+    cmds:
+      - task: build-assets-ios-simulator
+        vars: {
+          PRODUCTION: "yes",
+          OUTPUT_DIR: '{{default "./ff-ios/build.sim64/Debug-iphonesimulator/FaithfulFountain.app/Assets" .OUTPUT_DIR}}',
+          COMMAND: '{{default "" .COMMAND}}'
+        }
+  build-assets-windows:
+    cmds:
+      - task: internal-build-assets-windows
+        vars: {
+          PRODUCTION: '{{default "no" .PRODUCTION}}',
+          OUTPUT_DIR: "./Assets/bin",
+          PLATFORM: "Windows",
+          GRAPHICS_BACKEND: '{{default "GL" .GRAPHICS_BACKEND}}',
+          COMMAND: '{{default "" .COMMAND}}'
+        }
+  clean-assets-windows:
+    cmds:
+      - task: build-assets-windows
+        vars: {
+          COMMAND: "clean"
+        }
+  build-assets-windows-release:
+    cmds:
+      - task: build-assets-windows
+        vars: {
+          PRODUCTION: "yes",
+          GRAPHICS_BACKEND: "GL"
+        }
+  build-assets-android:
+    cmds:
+      - task: internal-build-assets
+        vars: {
+          PRODUCTION: '{{default "no" .PRODUCTION}}',
+          OUTPUT_DIR: "./ff-android/app/src/main/assets",
+          PLATFORM: "Android",
+          GRAPHICS_BACKEND: 'GLES',
+          COMMAND: '{{default "" .COMMAND}}'
+        }
+  clean-assets-android:
+    cmds:
+      - task: buid-assets-android
+        vars: {
+          COMMAND: "clean"
+        }
+  build-assets-android-release:
+    cmds:
+      - task: build-assets-android
+        vars: {
+          PRODUCTION: "yes"
+        }

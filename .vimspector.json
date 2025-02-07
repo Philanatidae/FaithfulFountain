@@ -1,0 +1,45 @@
+{
+    "$schema": "https://puremourning.github.io/vimspector/schema/vimspector.schema.json#",
+    "configurations": {
+        "desktop": {
+            "adapter": "CodeLLDB",
+            "default": true,
+            "breakpoints": {
+                "exception": {
+                    "throw": "Y",
+                    "catch": "N"
+                }
+            },
+            "configuration": {
+                "request": "launch",
+                "program": "${workspaceRoot}/build/ff-desktop/ff-desktop",
+                "env": {
+                    "BASEPATH": "${workspaceRoot}"
+                },
+                "args": [
+                    "-Dgame_library_path=\"${workspaceRoot}/build/RollGame/libRollGame.dylib\"",
+                    "-Dasset_bundle_path=\"${workspaceRoot}/Assets/bin\""
+                ]
+            }
+        },
+        "tests": {
+            "adapter": "CodeLLDB",
+            "default": true,
+            "breakpoints": {
+                "exception": {
+                    "throw": "Y",
+                    "catch": "N"
+                }
+            },
+            "configuration": {
+                "request": "launch",
+                "program": "${workspaceRoot}/build/ff-core/tests/ff-tests-core",
+                "env": {
+                    "BASEPATH": "${workspaceRoot}"
+                },
+                "args": [
+                ]
+            }
+        }
+    }
+}

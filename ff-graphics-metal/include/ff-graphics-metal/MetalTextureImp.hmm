@@ -1,0 +1,83 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FAITHFUL_FOUNTAIN_METAL_GRAPHICS_METAL_TEXTURE_IMP_HPP
+#define _FAITHFUL_FOUNTAIN_METAL_GRAPHICS_METAL_TEXTURE_IMP_HPP
+
+#import <Metal/Metal.h>
+
+#include <ff/graphics/Texture.hpp>
+#include <ff-graphics-metal/MetalGraphicsDevice.hmm>
+
+// Some reading on memoryless texture:
+// https://supertrouper.gitbooks.io/metal-programming-guide/content/whats-new-in-ios-10-tvos-10-and-macos-1012.html
+
+namespace ff {
+
+class MetalTextureImp : public TextureImp {
+public:
+    MetalTextureImp(MetalGraphicsDevice* const& graphicsDevice); // owned
+    MetalTextureImp(MetalGraphicsDevice* const& graphicsDevice,
+        id<MTLTexture> nonOwnedTexture); // non-owned
+    ~MetalTextureImp() = default;
+
+    id<MTLTexture> getMTLTexture() const;
+
+    void init(TextureType const& type,
+        int const& width,
+        int const& height,
+        ColorBufferFormat const& format,
+        TextureFlag_t const& flags,
+        TextureUsage_t const& usage,
+        std::optional<std::string> const& label) override;
+    void init(TextureType const& type,
+        int const& width,
+        int const& height,
+        DepthBufferFormat const& format,
+        TextureFlag_t const& flags,
+        TextureUsage_t const& usage,
+        std::optional<std::string> const& label) override;
+
+    void readPixels(void* dataOut,
+        BufferFormatInfo_t const& formatInfo,
+        int const& x,
+        int const& y,
+        int const& width,
+        int const& height) override;
+
+    void bufferImage(void* const& data,
+        BufferFormatInfo_t const& formatInfo,
+        int const& mipLevel,
+        int const& subWidth,
+        int const& subHeight,
+        int const& xoffset,
+        int const& yoffset) override;
+
+    void bindToRenderPassDescriptorAsColor(MTLRenderPassDescriptor* renderPassDescriptor,
+        ColorBufferFormat const& format,
+        RenderTargetColorAttachmentOptions const& options,
+        int const& slot);
+    void bindToRenderPassDescriptorAsDepth(MTLRenderPassDescriptor* renderPassDescriptor,
+        DepthBufferFormat const& format,
+        RenderTargetDepthAttachmentOptions const& options);
+private:
+    void createTexture(int const& width,
+        int const& height,
+        MTLPixelFormat const& pixelFormat,
+        TextureFlag_t const& flags,
+        TextureUsage_t const& usage,
+        std::optional<std::string> const& label);
+
+    MetalGraphicsDevice* const _graphicsDevice;
+
+    id<MTLTexture> _texture;
+    bool _nonOwning;
+};
+
+}
+
+#endif
+

@@ -1,0 +1,30 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FAITHFUL_FOUNTAIN_GRAPHICS_METAL_METAL_VERTEX_DESCRIPTOR_HPP
+#define _FAITHFUL_FOUNTAIN_GRAPHICS_METAL_METAL_VERTEX_DESCRIPTOR_HPP
+
+#import <Metal/Metal.h>
+
+#include <ff-graphics-metal/MetalGraphicsDevice.hmm>
+#include <ff/graphics/IVertexDescriptor.hpp>
+
+namespace ff {
+    MTLVertexFormat convertAttributeFormatToMetalFormat(const AttributeFormat& format);
+
+    class MetalVertexDescriptor : public IVertexDescriptor {
+    public:
+        MetalVertexDescriptor(MetalGraphicsDevice* const& graphicsDevice,
+            const VertexDescriptorInfo& info);
+        virtual ~MetalVertexDescriptor();
+
+        MTLVertexDescriptor* getVertexDescriptor() const;
+    private:
+        MTLVertexDescriptor* _vertexDescriptor;
+    };
+}
+
+#endif

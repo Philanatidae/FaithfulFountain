@@ -1,0 +1,124 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:simpleType name="ff_type_BitmapFont_type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="msdf"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ff_type_Texture_usage">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="source"/>
+            <xs:enumeration value="target"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ff_type_Material_tint_color">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(([1-2][0-9][0-9])|([1-9][0-9])|([0-9])),(([1-2][0-9][0-9])|([1-9][0-9])|([0-9])),(([1-2][0-9][0-9])|([1-9][0-9])|([0-9]))"></xs:pattern>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="Directory">
+        <xs:complexType>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="Texture">
+                    <xs:complexType>
+                        <xs:attribute name="name" type="xs:ID" use="required" />
+                        <xs:attribute name="path" use="required" />
+                        <xs:attribute name="usage" type="ff_type_Texture_usage" default="target" />
+                        <xs:attribute name="mip-map" type="xs:boolean" default="0" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="TextureAtlas">
+                    <xs:complexType>
+                        <xs:choice maxOccurs="unbounded">
+                            <xs:element name="Source">
+                                <xs:complexType>
+                                    <xs:attribute name="texture" type="xs:string" use="required" />
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:choice>
+                        <xs:attribute name="name" type="xs:ID" use="required" />
+                        <xs:attribute name="border" type="xs:int" />
+                        <xs:attribute name="padding" type="xs:int" default="0" />
+                        <xs:attribute name="pre-multiply-alpha" type="xs:boolean" default="false" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Material">
+                    <xs:complexType>
+                        <xs:attribute name="name" type="xs:ID" use="required" />
+                        <xs:attribute name="shader" type="xs:string" default="mesh" />
+                        <xs:attribute name="tint-color" type="ff_type_Material_tint_color" default="255,255,255" />
+                        <xs:attribute name="diffuse-texture" type="xs:string" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Model">
+                    <xs:complexType>
+                        <xs:choice maxOccurs="unbounded">
+                            <xs:element name="Validate">
+                                <xs:complexType>
+                                    <xs:attribute name="mesh" type="xs:string" use="required" />
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="Assign">
+                                <xs:complexType>
+                                    <xs:attribute name="mesh" type="xs:string" use="required" />
+                                    <xs:attribute name="material" type="xs:string" use="required" />
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:choice>
+                        <xs:attribute name="name" type="xs:ID" use="required" />
+                        <xs:attribute name="path" type="xs:string" use="required" />
+                        <xs:attribute name="validate-meshes" type="xs:boolean" default="false" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Raw">
+                    <xs:complexType>
+                        <xs:attribute name="name" type="xs:ID" use="required" />
+                        <xs:attribute name="path" use="required" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Audio">
+                    <xs:complexType>
+                        <xs:attribute name="name" type="xs:ID" use="required" />
+                        <xs:attribute name="path" use="required" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="BitmapFont">
+                    <xs:complexType>
+                        <xs:attribute name="name" use="required" type="xs:ID" />
+                        <xs:attribute name="path" use="required" />
+                        <xs:attribute name="type" use="required" type="ff_type_BitmapFont_type" />
+                        <xs:attribute name="msdf-radius" type="xs:integer" use="required" />
+                        <xs:attribute name="msdf-font-size" type="xs:integer" use="required" />
+                        <xs:attribute name="texture-usage" type="ff_type_Texture_usage" default="target" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="ShaderFunction">
+                    <xs:complexType>
+                        <xs:attribute name="name" type="xs:ID" use="required" />
+                        <xs:attribute name="path" use="required" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="ShaderLibrary">
+                    <xs:complexType>
+                        <xs:choice maxOccurs="unbounded">
+                            <xs:element name="Shader">
+                                <xs:complexType>
+                                    <xs:attribute name="name" use="required" type="xs:ID" />
+                                    <xs:attribute name="vertex-function" use="required" />
+                                    <xs:attribute name="fragment-function" use="required" />
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:choice>
+                        <xs:attribute name="name" type="xs:ID" use="required" />
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+            <xs:attribute name="version" type="xs:integer" use="required" fixed="0" />
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -1,0 +1,30 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FAITHFUL_FOUNTAIN_MESSAGES_EVENT_HPP
+#define _FAITHFUL_FOUNTAIN_MESSAGES_EVENT_HPP
+
+#include <string>
+#include <tinyformat/tinyformat.h>
+
+namespace ff {
+
+class Event {
+public:
+    virtual ~Event() = default;
+
+    virtual std::string getName() const = 0;
+
+    virtual std::string stringify() const = 0;
+};
+
+#define _FF_EVENT_DEFINE_STRINGIFY(format_str, ...) std::string stringify() const override { return tinyformat::format((format_str), __VA_ARGS__); } 
+
+@FF_EVENT_DEFINE_MACROS@
+
+}
+
+#endif

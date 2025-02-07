@@ -1,0 +1,61 @@
+/* Any copyright is dedicated to the Public Domain.
+ * https://creativecommons.org/publicdomain/zero/1.0/ */
+
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    signingConfigs {
+        release {
+            storeFile file('')
+            storePassword ''
+            keyAlias ''
+            keyPassword ''
+        }
+    }
+    compileSdkVersion 33
+    buildToolsVersion "33.0.1"
+
+    defaultConfig {
+        applicationId "com.philanatidae.ffrollgame"
+        minSdkVersion 18
+        targetSdkVersion 33
+        versionCode 1
+        versionName "0.0.1"
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_STL=c++_shared -DFF_GAME=RollGame"
+            }
+        }
+        signingConfig signingConfigs.release
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            externalNativeBuild {
+                cmake {
+                    cppFlags += "-O2"
+                }
+            }
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')
+        }
+    }
+    ndkVersion '23.2.8568313'
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+}

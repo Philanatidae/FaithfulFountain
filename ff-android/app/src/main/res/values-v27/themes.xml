@@ -1,0 +1,8 @@
+<!-- Any copyright is dedicated to the Public Domain.
+   - https://creativecommons.org/publicdomain/zero/1.0/ -->
+
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Ffandroid" parent="Theme.AppCompat.Light.DarkActionBar">
+    </style>
+</resources>

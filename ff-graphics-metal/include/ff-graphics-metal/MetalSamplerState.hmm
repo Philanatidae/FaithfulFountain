@@ -1,0 +1,37 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FAITHFUL_FOUNTAIN_METAL_GRAPHICS_METAL_SAMPLER_STATE_HPP
+#define _FAITHFUL_FOUNTAIN_METAL_GRAPHICS_METAL_SAMPLER_STATE_HPP
+
+#import <Metal/Metal.h>
+
+#include <ff-graphics-metal/MetalGraphicsDevice.hmm>
+#include <ff/graphics/ISamplerState.hpp>
+
+namespace ff {
+    MTLSamplerMinMagFilter convertMinMagFilterToMetalFilter(const SamplerFilter& filter);
+    MTLSamplerAddressMode convertAddressModeToMetalAddressMode(const SamplerAddressMode& addressMode);
+    MTLSamplerMipFilter convertMipFilterToMetalFilter(const SamplerMipFilter& filter);
+
+    class MetalSamplerState : public ISamplerState {
+    public:
+        MetalSamplerState(MetalGraphicsDevice* const& graphicsDevice,
+            const SamplerFilter& minFilter,
+            const SamplerFilter& magFilter,
+            const SamplerAddressMode& sAddressMode,
+            const SamplerAddressMode& tAddressMode,
+            const SamplerMipFilter& mipFilter);
+        ~MetalSamplerState();
+
+        id<MTLSamplerState> getSamplerState() const;
+
+    private:
+        id<MTLSamplerState> _samplerState;
+    };
+}
+
+#endif

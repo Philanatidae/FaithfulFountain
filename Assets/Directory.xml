@@ -1,0 +1,75 @@
+<!-- Any copyright is dedicated to the Public Domain.
+   - https://creativecommons.org/publicdomain/zero/1.0/ -->
+
+<?xml version="1.0"?>
+<Directory
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../ff-asset-builder/Directory.xsd"
+    version="0">
+
+    <Texture name="texture_material_color_grid" path="models/ColorGrid.png" usage="target" mip-map="true" />
+
+    <!-- <TextureAtlas name="texture_atlas_sprites"
+        padding="1">
+        <Source texture="texture_ui_menu_button_pressed" />
+    </TextureAtlas> -->
+
+    <Audio name="sound_ui_button_click" path="sounds/click3.ogg" />
+
+    <BitmapFont name="font_roboto" path="fonts/Roboto.ttf" type="msdf" msdf-radius="12" msdf-font-size="42"
+        texture-usage="target" />
+
+    <Material name="mat_color_grid"
+        shader="mesh"
+        tint-color="255,255,255"
+        diffuse-texture="texture_material_color_grid" />
+    <Material name="mat_sphere"
+        shader="mesh"
+        tint-color="255,255,255" />
+
+    <Model name="mod_cube" path="models/cube.glb"
+        validate-meshes="true">
+        <Validate mesh="Cube" />
+
+        <Assign mesh="Cube" material="mat_color_grid" />
+    </Model>
+    <Model name="mod_sphere" path="models/Sphere.glb"
+        validate-meshes="true">
+        <Validate mesh="Sphere" />
+
+        <Assign mesh="Sphere" material="mat_sphere" />
+    </Model>
+
+    <ShaderFunction name="vertex_simple" path="shaders/simple.vert" />
+    <ShaderFunction name="vertex_simple_color" path="shaders/simple_color.vert" />
+    <ShaderFunction name="vertex_simple_color_camera" path="shaders/simple_color_camera.vert" />
+    <ShaderFunction name="vertex_sprite" path="shaders/sprite.vert" />
+    <ShaderFunction name="vertex_sprite_multi" path="shaders/sprite_multi.vert" />
+    <ShaderFunction name="vertex_sprite_no_camera" path="shaders/sprite_no_camera.vert" />
+    <ShaderFunction name="vertex_sprite_imgui" path="shaders/sprite_imgui.vert" />
+    <ShaderFunction name="vertex_mesh" path="shaders/mesh.vert" />
+    <ShaderFunction name="vertex_actor_picker" path="shaders/actor_picker.vert" />
+    
+    <ShaderFunction name="frag_simple" path="shaders/simple.frag" />
+    <ShaderFunction name="frag_simple_color" path="shaders/simple_color.frag" />
+    <ShaderFunction name="frag_sprite" path="shaders/sprite.frag" />
+    <ShaderFunction name="frag_sprite_msdf" path="shaders/sprite_msdf.frag" />
+    <ShaderFunction name="frag_sprite_multi" path="shaders/sprite_multi.frag" />
+    <ShaderFunction name="frag_sprite_multi_msdf" path="shaders/sprite_multi_msdf.frag" />
+    <ShaderFunction name="frag_mesh" path="shaders/mesh.frag" />
+    <ShaderFunction name="frag_actor_picker" path="shaders/actor_picker.frag" />
+
+    <ShaderLibrary name="shader_library_main">
+        <Shader name="simple" vertex-function="vertex_simple" fragment-function="frag_simple" />
+        <Shader name="simple_color" vertex-function="vertex_simple_color" fragment-function="frag_simple_color" />
+        <Shader name="simple_color_camera" vertex-function="vertex_simple_color_camera" fragment-function="frag_simple_color" />
+        <Shader name="sprite" vertex-function="vertex_sprite" fragment-function="frag_sprite" />
+        <Shader name="sprite_msdf" vertex-function="vertex_sprite" fragment-function="frag_sprite_msdf" />
+        <Shader name="sprite_multi" vertex-function="vertex_sprite_multi" fragment-function="frag_sprite_multi" />
+        <Shader name="sprite_multi_msdf" vertex-function="vertex_sprite_multi" fragment-function="frag_sprite_multi_msdf" />
+        <Shader name="sprite_no_camera" vertex-function="vertex_sprite_no_camera" fragment-function="frag_sprite" />
+        <Shader name="sprite_imgui" vertex-function="vertex_sprite_imgui" fragment-function="frag_sprite" />
+        <Shader name="mesh" vertex-function="vertex_mesh" fragment-function="frag_mesh" />
+        <Shader name="actor_picker" vertex-function="vertex_actor_picker" fragment-function="frag_actor_picker" />
+    </ShaderLibrary>
+</Directory>

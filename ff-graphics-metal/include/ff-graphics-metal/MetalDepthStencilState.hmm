@@ -1,0 +1,36 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FAITHFUL_FOUNTAIN_GRAPHICS_METAL_METAL_DEPTH_STENCIL_STATE_HPP
+#define _FAITHFUL_FOUNTAIN_GRAPHICS_METAL_METAL_DEPTH_STENCIL_STATE_HPP
+
+#include <ff/graphics/IDepthStencilState.hpp>
+
+#include <ff-graphics-metal/MetalGraphicsDevice.hmm>
+
+#import <Metal/Metal.h>
+
+namespace ff {
+    MTLCompareFunction convertDepthCompareFunctionToMetalDepthCompareFunction(DepthCompareFunction depthCompareFunction);
+
+    class MetalDepthStencilState : public IDepthStencilState {
+    public:
+        MetalDepthStencilState(MetalGraphicsDevice& graphicsDevice,
+                const DepthCompareFunction& depthCompareFunction,
+                const bool& depthWriteEnabled);
+        ~MetalDepthStencilState();
+
+        id<MTLDepthStencilState> getDepthStencilState() const;
+
+    private:
+        id<MTLDepthStencilState> _depthStencilState;
+
+        DepthCompareFunction _depthCompareFunction;
+        bool _depthWriteEnabled;
+    };
+}
+
+#endif

@@ -1,0 +1,51 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FAITHFUL_FOUNTAIN_AUDIO_CA_AUDIO_BACKEND_HPP
+#define _FAITHFUL_FOUNTAIN_AUDIO_CA_AUDIO_BACKEND_HPP
+
+#include <ff/audio/IAudioBackend.hpp>
+
+#include <memory>
+#include <array>
+
+#import <AudioToolbox/AudioToolbox.h>
+
+namespace ff {
+    constexpr int CAAUDIO_BACKEND_BUFFER_COUNT = 3;
+
+    class CAAudioBackend final : public IAudioBackend {
+    public:
+        CAAudioBackend();
+        ~CAAudioBackend();
+        
+        int getSampleRate() const override;
+
+    protected:
+        void onInitialize(const int& channels, const int& requestedSampleRate) override;
+        void onUpdate(const float& dt) override;
+        void onKill() override;
+        void onRequestPause() override;
+        void onRequestResume() override;
+
+    private:
+        AudioStreamBasicDescription _streamDescription;
+        AudioQueueRef _audioQueue;
+        std::array<AudioQueueBufferRef, CAAUDIO_BACKEND_BUFFER_COUNT> _audioQueueBuffers;
+        bool _running;
+
+        void createAudioQueue();
+        void startAudioQueue();
+        void stopAudioQueue();
+        void disposeAudioQueue();
+
+        static void caCallback(void* userData,
+            AudioQueueRef queue,
+            AudioQueueBufferRef buffer);
+    };
+}
+
+#endif

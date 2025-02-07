@@ -1,0 +1,64 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FAITHFUL_FOUNTAIN_GRAPHICS_METAL_METAL_BUFFER_HPP
+#define _FAITHFUL_FOUNTAIN_GRAPHICS_METAL_METAL_BUFFER_HPP
+
+#import <Metal/Metal.h>
+
+#include <ff-graphics-metal/MetalGraphicsDevice.hmm>
+
+namespace ff {
+    class MetalBuffer {
+    public:
+        MetalBuffer(MetalGraphicsDevice* const& graphicsDevice, size_t size);
+        virtual ~MetalBuffer();
+
+        const size_t& getSize() const;
+
+        void bufferData(void const* ptr, const size_t& size, const size_t& start = 0);
+
+        id<MTLBuffer> getBuffer();
+
+    private:
+        MetalGraphicsDevice* _graphicsDevice;
+
+        size_t const _size;
+
+        id<MTLBuffer> _buffer;
+    };
+
+    template<typename T>
+    class MetalBufferImp : public T {
+    public:
+        MetalBufferImp(MetalGraphicsDevice* const& graphicsDevice, int const& size);
+        virtual ~MetalBufferImp() = default;
+
+        void bufferData(void const* const& data, const int& size, const int& start) override;
+
+        MetalBuffer& getMetalBuffer();
+
+    private:
+        MetalBuffer _buffer;
+    };
+
+    template<typename T>
+    MetalBufferImp<T>::MetalBufferImp(MetalGraphicsDevice* const& graphicsDevice, int const& size)
+        :_buffer(graphicsDevice, size) {
+    }
+
+    template<typename T>
+    void MetalBufferImp<T>::bufferData(void const* const& data, const int& size, const int& start) {
+        _buffer.bufferData(data, size, start);
+    }
+
+    template<typename T>
+    MetalBuffer& MetalBufferImp<T>::getMetalBuffer() {
+        return _buffer;
+    }
+}
+
+#endif

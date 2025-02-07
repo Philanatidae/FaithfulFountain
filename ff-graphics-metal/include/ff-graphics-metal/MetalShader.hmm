@@ -1,0 +1,49 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FAITHFUL_FOUNTAIN_METAL_GRAPHICS_METAL_SHADER_HPP
+#define _FAITHFUL_FOUNTAIN_METAL_GRAPHICS_METAL_SHADER_HPP
+
+#include <ff/graphics/IShader.hpp>
+
+#import <Metal/Metal.h>
+
+#include <ff-graphics-metal/MetalGraphicsDevice.hmm>
+
+#include <unordered_set>
+
+namespace ff {
+    class MetalShader : public IShader {
+    public:
+        MetalShader(MetalGraphicsDevice& graphicsDevice,
+            id<MTLFunction> vertexFunction,
+            id<MTLFunction> fragmentFunction,
+            const std::unordered_set<int>& vertexImageSlots,
+            const std::unordered_set<int>& fragmentImageSlots,
+            const std::unordered_set<int>& vertexUBSlots,
+            const std::unordered_set<int>& fragmentUBSlots);
+        ~MetalShader();
+
+        id<MTLFunction> getVertexFunction() const;
+        id<MTLFunction> getFragmentFunction() const;
+
+        bool isImageSlotInVertexFunction(const int& slot) const;
+        bool isImageSlotInFragmentFunction(const int& slot) const;
+        bool isUniformBufferSlotInVertexFunction(const int& slot) const;
+        bool isUniformBufferSlotInFragmentFunction(const int& slot) const;
+
+    private:
+        id<MTLFunction> _vertexFunction;
+        id<MTLFunction> _fragmentFunction;
+
+        std::unordered_set<int> _vertexImageSlots;
+        std::unordered_set<int> _fragmentImageSlots;
+        std::unordered_set<int> _vertexUBSlots;
+        std::unordered_set<int> _fragmentUBSlots;
+    };
+}
+
+#endif

@@ -1,0 +1,8 @@
+<!-- Any copyright is dedicated to the Public Domain.
+   - https://creativecommons.org/publicdomain/zero/1.0/ -->
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Ffandroid" parent="Theme.AppCompat.DayNight.DarkActionBar">
+    </style>
+</resources>

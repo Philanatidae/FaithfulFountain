@@ -1,0 +1,30 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FF_GRAPHICS_METAL_METAL_LIBRARY_HPP
+#define _FF_GRAPHICS_METAL_METAL_LIBRARY_HPP
+
+#import <Metal/Metal.h>
+#include <ff/assets/IAssetBundle.hpp>
+#include <ff-graphics-metal/MetalShader.hmm>
+#include <unordered_map>
+#include <string>
+
+namespace ff {
+    class MetalLibrary final {
+    public:
+        MetalLibrary(id<MTLLibrary> library);
+        MetalLibrary(ff::IAssetBundle& assetBundle, const nlohmann::json& assetNode);
+        ~MetalLibrary();
+
+        id<MTLFunction> getFunction(const std::string& name);
+    private:
+        id<MTLLibrary> _library;
+        std::unordered_map<std::string, id<MTLFunction>> _cachedFns;
+    };
+}
+
+#endif

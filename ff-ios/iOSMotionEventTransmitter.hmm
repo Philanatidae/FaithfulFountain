@@ -1,0 +1,45 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FAITHFUL_FOUNTAIN_IOS_IOS_MOTION_EVENT_TRANSMITTER_HPP
+#define _FAITHFUL_FOUNTAIN_IOS_IOS_MOTION_EVENT_TRANSMITTER_HPP
+
+#import "CoreMotion/CoreMotion.h"
+
+namespace ff {
+
+class iOSMotionEventTransmitter final {
+public:
+    iOSMotionEventTransmitter();
+    ~iOSMotionEventTransmitter();
+    
+    bool isMotionAvailable() const;
+    
+    void setReportGravity(bool const& enabled);
+    void setReportOrientation(bool const& enabled);
+    void setReportAcceleration(bool const& enabled);
+    
+    bool isReportingGravity() const;
+    bool isReportingOrientation() const;
+    bool isReportingAcceleration() const;
+    
+private:
+    CMMotionManager* _motionManager;
+    
+    bool _reportingGravity;
+    bool _reportingOrientation;
+    bool _reportingAcceleration;
+    
+    void startReporting();
+    void stopReporting();
+    bool isReporting() const;
+    
+    void handleMotion(CMDeviceMotion* motion);
+};
+
+}
+
+#endif

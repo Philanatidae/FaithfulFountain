@@ -1,0 +1,44 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FF_IOS_GAME_LOOP_HPP
+#define _FF_IOS_GAME_LOOP_HPP
+
+#include <ff/GameServicer.hpp>
+
+#import <UIKit/UIKit.h>
+#import "ViewController.h"
+
+#include <chrono>
+
+namespace ff {
+    class iOSGameLoop : public ff::GameLoop {
+    public:
+        iOSGameLoop(ViewController* viewController,
+            CADisplayLink* displayLink);
+        virtual ~iOSGameLoop();
+        
+        void init(ff::Game* const& gamePtr) override;
+        float computeFrameDeltaTime() override;
+        void update(const float& dt) override;
+        void onService() override;
+        void onShutdown() override;
+        float getTargetRefreshRate() override;
+        glm::ivec2 getBackBufferDimensions() override;
+        
+        void beginForceZeroDeltaTime();
+        void endForceZeroDeltaTime();
+        
+    private:
+        ViewController* _viewController;
+        CADisplayLink* _displayLink;
+        std::chrono::time_point<std::chrono::steady_clock> _prevLoopTime;
+        bool _loopTimeInit;
+        bool _forceZeroDeltaTime;
+    };
+}
+
+#endif

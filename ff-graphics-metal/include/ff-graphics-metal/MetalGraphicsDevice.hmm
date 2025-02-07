@@ -1,0 +1,122 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FAITHFUL_FOUNTAIN_METAL_GRAPHICS_METAL_GRAPHICS_DEVICE_HPP
+#define _FAITHFUL_FOUNTAIN_METAL_GRAPHICS_METAL_GRAPHICS_DEVICE_HPP
+
+#include <ff/graphics/IGraphicsDevice.hpp>
+#include <ff/assets/IAssetBundle.hpp>
+#include <ff/util/Macros.hpp>
+
+#import <Metal/Metal.h>
+#include <TargetConditionals.h>
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+    #import <UIKit/UIKit.h>
+#elif TARGET_OS_OSX
+    #import <Cocoa/Cocoa.h>
+    #import <Quartz/Quartz.h>
+#else
+    #error "Unknown Apple platform"
+#endif
+
+#include <memory>
+
+namespace ff {
+    class MetalShaderLibrary;
+
+    class FullscreenRenderTarget;
+    class PPQuad;
+
+class API_AVAILABLE(ios(13.0)) MetalGraphicsDevice : public IGraphicsDevice {
+    public:
+        MetalGraphicsDevice();
+        virtual ~MetalGraphicsDevice() = default;
+
+        id<MTLDevice> getDevice() const;
+        CAMetalLayer* getLayer() const;
+        id<MTLCommandBuffer> getCurrentCommandBuffer();
+
+        UVCoordSign getNativeUVSign() const override;
+
+        GPUType getGPUType() const override;
+        GPUMemoryType getGPUMemoryType() const override;
+        ClipSpaceHandedness getClipSpaceHandedness() const override;
+
+        GraphicsBackend getBackendName() const override;
+
+        ResourceHandle<ColorTexture> getPresentationRenderTarget() const override;
+
+    public:
+        void initImpl(ff::IAssetBundle* const& assetBundle) override;
+
+        void preRenderImpl() override;
+        void postRenderImpl() override;
+
+        void onBackBufferDimensionsUpdated(const glm::ivec2& dimensions) override;
+
+        TextureImp* createColorTextureImp(TextureFlag_t const& flags,
+            TextureUsage_t const& usage) override;
+        TextureImp* createDepthTextureImp(TextureFlag_t const& flags,
+            TextureUsage_t const& usage) override;
+        std::shared_ptr<ISamplerState> createSamplerStateImpl(const SamplerFilter& minFilter,
+            const SamplerFilter& magFilter,
+            const SamplerAddressMode& sAddressMode,
+            const SamplerAddressMode& tAddressMode,
+            const SamplerMipFilter& mipFilter) override;
+
+        std::shared_ptr<IVertexDescriptor> createVertexDescriptorImpl(const VertexDescriptorInfo& info) override;
+
+        std::shared_ptr<IRenderState> createRenderStateImpl(std::shared_ptr<IShader> const& shader,
+            std::shared_ptr<IVertexDescriptor> const& vertexDescriptor,
+            std::vector<RenderColorLayerState> const& renderColorLayerStates,
+            std::optional<DepthBufferFormat> const& depthBufferFormat) override;
+        std::shared_ptr<IDepthStencilState> createDepthStencilStateImpl(const DepthCompareFunction& depthCompareFunction,
+            const bool& depthWriteEnabled) override;
+
+        std::shared_ptr<IRenderPass> beginRenderPassImpl(std::vector<std::pair<ResourceHandle<ColorTexture>,
+                RenderTargetColorAttachmentOptions>> const& colorTargets,
+            std::optional<std::pair<ResourceHandle<DepthTexture>, RenderTargetDepthAttachmentOptions>> const& depthTarget) override;
+        std::shared_ptr<IBlitPass> beginBlitPassImpl() override;
+
+        std::shared_ptr<IShader> getShaderImpl(const std::string& shaderName) override;
+
+        IndexBufferImp* createIndexBufferImp(IndexType const& type, const int& elementSize, const int& count) override;
+        UniformBufferImp* createUniformBufferImp(const int& elementSize) override;
+        VertexBufferImp* createVertexBufferImp(const int& elementSize, const int& count) override;
+
+    private:
+        id<MTLDevice> _device;
+        CAMetalLayer* _layer;
+
+        std::shared_ptr<FullscreenRenderTarget> _presentationRenderTarget;
+        RenderTargetColorAttachmentOptions _presentationDummyAttachOptions;
+        std::shared_ptr<PPQuad> _finalPresentationPPQuad;
+        std::shared_ptr<ISamplerState> _finalPresentationSamplerState;
+        bool _didRenderPassOfPresentationRenderTarget;
+
+        ResourceHandle<MetalShaderLibrary> _shaderLibrary;
+
+        id<MTLRenderPipelineState> _presentationRenderPipelineState;
+        id<MTLCommandQueue> _commandQueue;
+
+        id<CAMetalDrawable> _currentDrawable;
+        id<MTLCommandBuffer> _currentCommandBuffer;
+        id<MTLRenderCommandEncoder> _currentCommandEncoder;
+
+        void initializeDevice();
+        void initializeShaderLibrary(ff::IAssetBundle* const& assetBundle);
+        void initializeLayer();
+
+        void initializePresentationRenderTarget();
+
+        void updateBackBuffer(glm::ivec2 const& dimensions);
+
+        id<MTLRenderCommandEncoder> _imguiRenderEncoder;
+        bool _imgui;
+    };
+}
+
+#endif

@@ -1,0 +1,36 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FAITHFUL_FOUNTAIN_GRAPHICS_METAL_METAL_BLIT_PASS_HMM
+#define _FAITHFUL_FOUNTAIN_GRAPHICS_METAL_METAL_BLIT_PASS_HMM
+
+#import <Metal/Metal.h>
+
+#include <ff/graphics/IBlitPass.hpp>
+
+#include <ff-graphics-metal/MetalGraphicsDevice.hmm>
+
+namespace ff {
+
+class MetalBlitPass : public IBlitPass {
+public:
+    MetalBlitPass(MetalGraphicsDevice* const& graphicsDevice);
+    virtual ~MetalBlitPass() = default;
+
+protected:
+    void genMipMapsImpl(ResourceHandle<ColorTexture> const& texture) override;
+
+    void endImpl() override;
+
+private:
+    MetalGraphicsDevice* const _graphicsDevice;
+
+    id<MTLBlitCommandEncoder> _commandEncoder;
+};
+
+}
+
+#endif

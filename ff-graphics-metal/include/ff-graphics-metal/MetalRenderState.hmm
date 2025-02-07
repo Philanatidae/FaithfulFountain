@@ -1,0 +1,34 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FAITHFUL_FOUNTAIN_METAL_GRAPHICS_METAL_RENDER_STATE_HPP
+#define _FAITHFUL_FOUNTAIN_METAL_GRAPHICS_METAL_RENDER_STATE_HPP
+
+#import <Metal/Metal.h>
+
+#include <ff-graphics-metal/MetalGraphicsDevice.hmm>
+
+namespace ff {
+    class MetalRenderState final : public IRenderState {
+    public:
+        MetalRenderState(MetalGraphicsDevice* const& metalGraphicsDevice,
+            std::shared_ptr<IShader> const& shader,
+            std::shared_ptr<IVertexDescriptor> const& vertexDescriptor,
+            std::vector<RenderColorLayerState> const& renderColorLayerStates,
+            std::optional<DepthBufferFormat> const& depthBufferFormat,
+            const std::vector<MTLPixelFormat>& colorBufferOverrides = {});
+        ~MetalRenderState() = default;
+
+        id<MTLRenderPipelineState> getMetalRenderPipelineState();
+
+    private:
+        MetalGraphicsDevice* const _graphicsDevice;
+
+        id<MTLRenderPipelineState> _renderState;
+    };
+}
+
+#endif

@@ -1,0 +1,34 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FAITHFUL_FOUNTAIN_SUPPORT_APPLE_NSBUNDLE_ASSET_BUNDLE_HMM
+#define _FAITHFUL_FOUNTAIN_SUPPORT_APPLE_NSBUNDLE_ASSET_BUNDLE_HMM
+
+#include <ff/assets/IAssetBundle.hpp>
+
+#import <Foundation/Foundation.h>
+
+namespace ff {
+    class NSBundleAssetBundle : public IAssetBundle {
+    public:
+        NSBundleAssetBundle(NSBundle* bundle, NSString* directory);
+        virtual ~NSBundleAssetBundle();
+
+        virtual std::shared_ptr<BinaryReader> getAssetReader(const std::string& path) override;
+
+        NSBundle* getNSBundle();
+        NSString* getDirectory();
+
+    protected:
+        NSBundle* _bundle;
+        NSString* _directory;
+
+        virtual void onInit() override;
+        virtual nlohmann::json loadIndexObject() override;
+    };
+}
+
+#endif

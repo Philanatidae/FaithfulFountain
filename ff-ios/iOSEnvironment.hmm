@@ -1,0 +1,54 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef _FAITHFUL_FOUNTAIN_IOS_IOS_ENVIRONMENT_HPP
+#define _FAITHFUL_FOUNTAIN_IOS_IOS_ENVIRONMENT_HPP
+
+#include <ff/env/IEnvironment.hpp>
+#include <ff/env/StdDataStorage.hpp>
+
+#include <ff/messages/EventListener.hpp>
+#include <ff/commands/env/EnvRequestOpenURLCommand.hpp>
+
+#include <memory>
+#include "iOSMotionEventTransmitter.hmm"
+
+namespace ff {
+    class iOSEnvironment : public IEnvironment,
+    public EventListener<EnvRequestOpenURLCommand> {
+    public:
+        iOSEnvironment();
+        virtual ~iOSEnvironment();
+        
+        void init() override;
+
+        std::string getName() const override;
+        EnvironmentCapabilities_t getCapabilities() const override;
+
+        IDataStorage const& getDataStorage() const override;
+        
+        void setReportGravity(bool const& enable) override;
+        void setReportOrientation(bool const& enable) override;
+        void setReportAcceleration(bool const& enable) override;
+        
+        bool isReportingGravity() const override;
+        bool isReportingOrientation() const override;
+        bool isReportingAcceleration() const override;
+
+        std::string getConfigDirectory() const;
+        
+    protected:
+        bool processEvent(EnvRequestOpenURLCommand const& evt) override;
+
+    private:
+        StdDataStorage _dataStorage;
+        std::unique_ptr<iOSMotionEventTransmitter> _motionEventTransmitter;
+
+        EnvironmentCapabilities_t _capabilities;
+    };
+}
+
+#endif
