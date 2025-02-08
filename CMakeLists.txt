@@ -216,7 +216,7 @@ if(FF_IS_DESKTOP)
 endif()
 
 # Game
-add_subdirectory(${FF_GAME})
+add_subdirectory("${CMAKE_SOURCE_DIR}/${FF_GAME}" "${CMAKE_BINARY_DIR}/${FF_GAME}")
 
 # Platforms
 if(FF_IS_DESKTOP)
