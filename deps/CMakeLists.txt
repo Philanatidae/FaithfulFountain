@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-include(CPM)
+include("${CMAKE_CURRENT_SOURCE_DIR}/../cmake/get_cpm.cmake")
 
 macro(ff_AddRepoDepNoBuild dep_name dep_version dep_type dep_repo dep_tag)
     CPMAddPackage(
