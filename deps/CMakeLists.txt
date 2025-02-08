@@ -61,19 +61,19 @@ endif()
 # libepoxy
 ###############################################
 if(NOT IOS)
-    ff_AddRepoDepNoBuild(libepoxy-cmake 1.5.10-rev2 GIT "https://github.com/Philanatidae/libepoxy-cmake" a375152)
+    ff_AddRepoDepNoBuild(libepoxy 1.5.10 GIT "https://github.com/Philanatidae/libepoxy" ed623bb)
 
     set(BUILD_SHARED_LIBS NO)
     # @todo Instead of excluding, have an inclusive for X (Linux, BSD, etc.)
-    if(NOT ANDROID AND NOT APPLE AND NOT WIN32)
+    if(NOT ANDROID AND NOT APPLE AND NOT WIN32 AND NOT EMSCRIPTEN)
         # Linux
         set(EPOXY_ENABLE_GLX Yes)
         set(EPOXY_ENABLE_X11 Yes)
     endif()
-    if(ANDROID)
+    if(ANDROID AND NOT EMSCRIPTEN)
         set(EPOXY_ENABLE_EGL Yes)
     endif()
-    add_subdirectory(libepoxy-cmake)
+    add_subdirectory(libepoxy)
 endif()
 
 ###############################################
