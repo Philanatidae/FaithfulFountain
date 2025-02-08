@@ -21,7 +21,7 @@ There are a few main principles that Faithful Fountain has been developed under:
  - The graphics abstraction's API is similar to Metal. I've found that Metal's API is a nice blend of verbosity for low-level API's while still allowing for OpenGL ES 3.0 support.
     - OpenGL ES 3.0 will be retained as long as I can, but I do understand that this API is very old and I've already ran into some limitations.
  - No hampering the ability for FF to be integrated into proprietary software.
-    - The engine is open-source under a permissive license to enforce contributing back upstream, but games themselves can be closed-source. The engine should not restrict this ability (i.e. the engine code should not be written such that it forces a project to release proprietary code that they don't want shared).
+    - The engine is open-source under a copyleft license to enforce contributing back upstream, but games themselves can be closed-source. The engine should not restrict this ability (i.e. the engine code should not be written such that it forces a project to release proprietary code that they don't want shared).
  - Don't abstract too early.
     - The long-term goal is for FF to be modular, but since the engine is developped alongside a project, the current non-modular nature hasn't been an issue so far.
 
