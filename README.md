@@ -33,7 +33,7 @@ FF has the following main pieces:
  - Scenes
  - CVars
 
-Processes can be added to the main GameServicer's ProcessManager, which are updated every update cycle. Processes can be chained together, for example types of animation or dialog boxes can be chains of processes.
+Processes can be added to the main GameServicer's ProcessManager, which are updated every update cycle. Processes can be chained together, for example animation or dialog boxes can be individual processes chained together.
 
 There are four main types of processes:
  - Tasks: timers, animations, etc.
@@ -74,7 +74,7 @@ TODO.
 
 ## License
 
-This codebase is primarily licensed until the Mozilla Public License Version 2.0. See `LICENSE` for more information. All files in this repository are released under this license unless stated otherwise.
+This codebase is primarily licensed with the Mozilla Public License Version 2.0. See `LICENSE` for more information. All files in this repository are released under this license unless stated otherwise.
 
 This repository contains copies of some third-party software that are licensed differently.
 
