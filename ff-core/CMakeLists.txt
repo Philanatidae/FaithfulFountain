@@ -21,6 +21,11 @@ target_link_libraries(ff-core
     #tracy @todo Re-enable Tracy
     )
 
+target_compile_definitions(ff-core PRIVATE
+    FF_GAME="${FF_GAME}"
+    FF_PACKAGE_PREFIX="${FF_PACKAGE_PREFIX}"
+)
+
 if(FF_IS_RELEASE)
     target_compile_definitions(ff-core PUBLIC FF_IS_RELEASE)
 endif()

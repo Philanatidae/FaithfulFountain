@@ -142,7 +142,9 @@ bool SDLEnvironment::isRecordingTextInput() const {
 std::string SDLEnvironment::getConfigDirectory() const {
     // Windows & Linux are the same; config path + package name
     // @todo Attempt to remove dependency on Sago, at least for Windows
-    return (std::filesystem::path(sago::getConfigHome())/CVars::get<std::string>("package_name")).string();
+    // @todo There's a platform equivalent to NSHomeDirectory on Windows.
+    // @todo Can Linux be automated here? Would be nice if we could make it abstract for BSD support.
+    return (std::filesystem::path(sago::getConfigHome())/CVars::get<std::string>("package_prefix")/CVars::get<std::string>("game_name")).string();
 }
 #endif
 

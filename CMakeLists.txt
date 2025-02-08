@@ -61,9 +61,13 @@ option(FF_BUILD_AUDIO_OBOE "Enables building ff-audio-oboe." ON)
 
 set(FF_MESSAGE_MAX_MEMBER_VARIABLES 6 CACHE STRING "Maximum member variables allowed in Message definitions (increasing generates additional macros).")
 
-set(FF_GAME "" CACHE STRING "Specifies the game folder and library name (required).")
+set(FF_GAME "" CACHE STRING "Specifies the game folder and library name (required). This is also used as the internal name of the game.")
 if(FF_GAME STREQUAL "") 
     message(FATAL_ERROR "FF_GAME is required.")
+endif()
+set(FF_PACKAGE_PREFIX "" CACHE STRING "Specifies the package prefix, typically in the form \"com.example\".")
+if(FF_PACAKAGE_PREFIX STREQUAL "") 
+    message(FATAL_ERROR "FF_PACKAGE_PREFIX is required.")
 endif()
 #== END OPTIONS ==
 

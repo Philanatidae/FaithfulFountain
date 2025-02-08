@@ -371,7 +371,7 @@ namespace ff {
                 cvarsCastFlagToString(cvarsTypeToCastFlag<T>()));
             return cvarIt->second->castToType<T>();
         }
-
+        
         static ICVar* getRawCVar(const std::string& name);
 
         static std::vector<std::string> getCVarNames();

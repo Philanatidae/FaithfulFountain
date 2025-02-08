@@ -8,20 +8,19 @@
 #include <ff/util/OS.hpp>
 #include <ff/graphics/Color.hpp>
 
-FF_CVAR_DEFINE(verse, std::string, "Trust in the LORD with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight. Proverbs 3:5-6.", ff::CVarFlags::READ_ONLY, "Inspirational quote for this project.")
-
-FF_CVAR_DEFINE(game_name, std::string, "FFRollGame", ff::CVarFlags::READ_ONLY, "Internal name of the game.")
-FF_CVAR_DEFINE(package_name, std::string, "com.philanatidae.RollGame", ff::CVarFlags::READ_ONLY, "Package name of the game.");
-
 FF_CVAR_DEFINE(cvars_config_name, std::string, "cvars.ini", ff::CVarFlags::READ_ONLY, "Default name of CVars INI config.")
 FF_CVAR_DEFINE(cvar_defaults_config_name, std::string, "cvar_defaults.ini", ff::CVarFlags::READ_ONLY, "Default name of CVar Defaults INI config.")
 
+FF_CVAR_DEFINE(game_name, std::string, FF_GAME, ff::CVarFlags::READ_ONLY, "Internal name of the game. Must match library definition in build tool.") \
+FF_CVAR_DEFINE(package_prefix, std::string, FF_PACKAGE_PREFIX, ff::CVarFlags::READ_ONLY, "Package prefix in the form \"com.example\".") \
+FF_CVAR_DEFINE(game_library_path, std::string, "./", ff::CVarFlags::DEV_PRESERVE, "Path to game dynamic library.") \
+
 FF_CVAR_DEFINE(debug_break_on_assert, bool, false, ff::CVarFlags::NONE, "Attempt to break debugger on FF_ASSERT failure.")
 FF_CVAR_DEFINE(debug_statistics_list_max_size, int, 20, ff::CVarFlags::DEV_PRESERVE, "Default max size of Statistics lists.")
-FF_CVAR_DEFINE(debug_console_log_limit, int, 2048, ff::CVarFlags::DEV_PRESERVE, "Maximum number of console entries stored.");
-FF_CVAR_DEFINE(debug_console_log_color, ff::Color, ff::Color(0x00FFF9FF), ff::CVarFlags::DEV_PRESERVE, "Color of console log messages.");
-FF_CVAR_DEFINE(debug_console_warn_color, ff::Color, ff::Color(0xFFBD00FF), ff::CVarFlags::DEV_PRESERVE, "Color of console warning messages.");
-FF_CVAR_DEFINE(debug_console_error_color, ff::Color, ff::Color(0xFF0000FF), ff::CVarFlags::DEV_PRESERVE, "Color of console error messages.");
+FF_CVAR_DEFINE(debug_console_log_limit, int, 2048, ff::CVarFlags::DEV_PRESERVE, "Maximum number of console entries stored.")
+FF_CVAR_DEFINE(debug_console_log_color, ff::Color, ff::Color(0x00FFF9FF), ff::CVarFlags::DEV_PRESERVE, "Color of console log messages.")
+FF_CVAR_DEFINE(debug_console_warn_color, ff::Color, ff::Color(0xFFBD00FF), ff::CVarFlags::DEV_PRESERVE, "Color of console warning messages.")
+FF_CVAR_DEFINE(debug_console_error_color, ff::Color, ff::Color(0xFF0000FF), ff::CVarFlags::DEV_PRESERVE, "Color of console error messages.")
 FF_CVAR_DEFINE(debug_show_console, bool, false, ff::CVarFlags::NONE, "Displa/hide the console.")
 FF_CVAR_DEFINE(debug_show_cvars, bool, false, ff::CVarFlags::NONE, "Display/hide statistics window.")
 FF_CVAR_DEFINE(debug_show_playback, bool, false, ff::CVarFlags::NONE, "Display/hide statistics window.")
@@ -30,8 +29,6 @@ FF_CVAR_DEFINE(debug_show_render_pipeline, bool, true, ff::CVarFlags::NONE, "Dis
 
 FF_CVAR_DEFINE(debug_cam_speed, float, 10.0f, ff::CVarFlags::DEV_PRESERVE, "Speed of debug camera movement.")
 FF_CVAR_DEFINE(debug_cam_sensitivity, float, 100.0f, ff::CVarFlags::DEV_PRESERVE, "Sensitivity of debug camera movement.")
-
-FF_CVAR_DEFINE(game_library_path, std::string, "libRollGamed.dylib", ff::CVarFlags::DEV_PRESERVE, "Path of game dynamic library.")
 
 FF_CVAR_DEFINE(asset_bundle_path, std::string, "./Assets", ff::CVarFlags::PRESERVE, "Path to the asset bundle (directory built using Asset Processor).")
 

@@ -95,7 +95,7 @@ namespace ff {
 
     std::string iOSEnvironment::getConfigDirectory() const {
         // NSHomeDirectory will respect sandbox.
-        return std::filesystem::path([NSHomeDirectory() UTF8String])/"Library"/"Application Support"/CVars::get<std::string>("package_name");
+        return std::filesystem::path([NSHomeDirectory() UTF8String])/"Library"/"Application Support"/CVars::get<std::string>("package_prefix")/CVars::get<std::string>("game_name");
     }
 
     void iOSEnvironment::processEvent(EnvRequestOpenURLCommand const& evt) {
