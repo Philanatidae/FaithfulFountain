@@ -5,8 +5,7 @@
 version: '3'
 
 env:
-  # Somehow remove hard-code reference to RollGame
-  GAME_LIBRARY: ./out/build/x64-Debug/RollGame/RollGame.dll
+  GAME_LIBRARY: ./out/build/x64-Debug/{{.GAME_NAME}}/{{.GAME_NAME}}.dll
 
 tasks:
   build-assets-platform:

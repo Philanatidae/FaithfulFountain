@@ -5,8 +5,7 @@
 version: '3'
 
 env:
-  # Somehow remove hard-code reference to RollGame
-  GAME_LIBRARY: ./build/RollGame/libRollGame.dylib
+  GAME_LIBRARY: ./build/{{.GAME_NAME}}/lib{{.GAME_NAME}}.dylib
 
 tasks:
   build-assets-platform:
