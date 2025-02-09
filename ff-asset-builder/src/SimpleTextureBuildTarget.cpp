@@ -70,8 +70,10 @@ namespace ff {
         int sh = textureData.getHeight();
 
         // If we are to mip map, do an early check.
-        FF_ASSERT(MathHelper::isPowerOfTwo(textureData.getWidth()), "Texture width must be a power of two (width is %s).", textureData.getWidth()); 
-        FF_ASSERT(MathHelper::isPowerOfTwo(textureData.getHeight()), "Texture height must be a power of two (width is %s).", textureData.getHeight()); 
+        if(_mipMap) {
+            FF_ASSERT(MathHelper::isPowerOfTwo(textureData.getWidth()), "Texture width must be a power of two (width is %s).", textureData.getWidth()); 
+            FF_ASSERT(MathHelper::isPowerOfTwo(textureData.getHeight()), "Texture height must be a power of two (height is %s).", textureData.getHeight()); 
+        }
 
         copyFileIfNewer(sourcePath, getOutputs(builder)[0]);
     }
