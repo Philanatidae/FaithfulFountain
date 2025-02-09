@@ -92,7 +92,7 @@ namespace ff {
     std::string DesktopEnvironment::getConfigDirectory() const {
         // Windows & Linux are the same; config path + package name
         // @todo Attempt to remove dependency on Sago, at least for Windows
-        return (std::filesystem::path(sago::getConfigHome())/CVars::get<std::string>("package_prefix")/CVars::get<std::string>("game_name")).string();
+        return (std::filesystem::path(sago::getConfigHome())/tinyformat::format("%s.%s", CVars::get<std::string>("package_prefix"), CVars::get<std::string>("game_name")).c_str()).string();
     }
 #endif
 

@@ -20,6 +20,6 @@ namespace ff {
         // a really good solution.
         // 
         // NSHomeDirectory will respect sandbox.
-        return std::filesystem::path([NSHomeDirectory() UTF8String])/"Library"/"Application Support"/CVars::get<std::string>("package_prefix")/CVars::get<std::string>("game_name");
+        return std::filesystem::path([NSHomeDirectory() UTF8String])/"Library"/"Application Support"/tinyformat::format("%s.%s", CVars::get<std::string>("package_prefix"), CVars::get<std::string>("game_name")).c_str();
     }
 }
