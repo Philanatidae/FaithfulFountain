@@ -56,7 +56,7 @@ The following utilities are required to be installed:
  - Android Studio (Android only) with NDK
  - Ninja (won't be required in the future)
  - [Task](https://taskfile.dev)
- - [msdg-bmfont-xml](https://github.com/soimy/msdf-bmfont-xml)
+ - [msdf-bmfont-xml](https://github.com/soimy/msdf-bmfont-xml)
 
 ## Supported Platforms
 The following platforms are supported:
